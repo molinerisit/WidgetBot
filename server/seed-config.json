@@ -1,0 +1,49 @@
+{
+  "bot": {
+    "id": "cibergaucho-bot",
+    "name": "Cibergaucho Bot",
+    "mode": "ventas",
+    "focus": "Gu\u00eda de ventas y atenci\u00f3n al cliente"
+  },
+  "llm": {
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "temperature": 0.3
+  },
+  "rag": {
+    "chunkSize": 200,
+    "chunkOverlap": 40,
+    "topK": 6,
+    "filters": "type:product OR type:policy"
+  },
+  "faq": [
+    {
+      "q": "\u00bfHacen env\u00edos?",
+      "a": "S\u00ed, a todo el pa\u00eds."
+    },
+    {
+      "q": "\u00bfCu\u00e1les son los medios de pago?",
+      "a": "Tarjeta, transferencia y efectivo en local."
+    }
+  ],
+  "rules": [
+    "Responder en tono cercano y persuasivo, sin presionar.",
+    "Ofrecer alternativas si no hay stock.",
+    "Aplicar cupones activos autom\u00e1ticamente si corresponde.",
+    "Cross\u2011sell y up\u2011sell por similitud."
+  ],
+  "ui": {
+    "showSources": true
+  },
+  "integrations": {
+    "publicKey": "pub_demo_123",
+    "secretKey": "sk_demo_123",
+    "webhookUrl": "http://localhost:8787/webhooks/events"
+  },
+  "handoff": {
+    "enabled": true,
+    "method": "whatsapp",
+    "whatsappNumber": "+5493410000000",
+    "emailAddress": "ventas@tutienda.com"
+  }
+}

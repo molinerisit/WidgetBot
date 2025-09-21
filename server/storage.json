@@ -1,0 +1,114 @@
+{
+  "config": {
+    "bot": {
+      "id": "cibergaucho-bot",
+      "name": "Cibergaucho Bot",
+      "mode": "ventas",
+      "focus": "Guía de ventas y atención al cliente"
+    },
+    "llm": {
+      "provider": "openai",
+      "model": "gpt-4o-mini",
+      "temperature": 0.3
+    },
+    "rag": {
+      "chunkSize": 200,
+      "chunkOverlap": 40,
+      "topK": 6,
+      "filters": "type:product OR type:policy"
+    },
+    "faq": [
+      {
+        "q": "¿Hacen envíos?",
+        "a": "Sí, a todo el país."
+      },
+      {
+        "q": "¿Cuáles son los medios de pago?",
+        "a": "Tarjeta, transferencia y efectivo en local."
+      }
+    ],
+    "rules": [
+      "Responder en tono cercano y persuasivo, sin presionar.",
+      "Ofrecer alternativas si no hay stock.",
+      "Aplicar cupones activos automáticamente si corresponde.",
+      "Cross‑sell y up‑sell por similitud."
+    ],
+    "ui": {
+      "showSources": true
+    },
+    "integrations": {
+      "publicKey": "pub_demo_123",
+      "secretKey": "sk_demo_123",
+      "webhookUrl": "http://localhost:8787/webhooks/events"
+    },
+    "handoff": {
+      "enabled": true,
+      "method": "whatsapp",
+      "whatsappNumber": "+5493410000000",
+      "emailAddress": "ventas@tutienda.com"
+    }
+  },
+  "conversations": {
+    "Fc-_ZHGg29aVvIGmksT8A": {
+      "id": "Fc-_ZHGg29aVvIGmksT8A",
+      "bot_id": "cibergaucho-bot",
+      "started_at": 1758418687193,
+      "user": {
+        "id": "anon"
+      }
+    },
+    "Vg69QMm_7PuOEE5HsLTws": {
+      "id": "Vg69QMm_7PuOEE5HsLTws",
+      "bot_id": "cibergaucho-bot",
+      "started_at": 1758421178500,
+      "user": {
+        "id": "anon"
+      }
+    }
+  },
+  "messages": {
+    "Fc-_ZHGg29aVvIGmksT8A": [
+      {
+        "role": "user",
+        "content": "hola",
+        "ts": 1758418987432
+      },
+      {
+        "role": "assistant",
+        "content": "¡Hola! ¿En qué puedo ayudarte hoy? Si tienes alguna pregunta sobre nuestros productos o servicios, estaré encantado de asistirte. \n\nFuentes (fragmentos usados): Ninguno.",
+        "ts": 1758418991340,
+        "meta": {
+          "source": "rag+llm"
+        }
+      },
+      {
+        "role": "user",
+        "content": "que productos tenes?",
+        "ts": 1758418993997
+      },
+      {
+        "role": "assistant",
+        "content": "¡Hola! En Cibergaucho tenemos una variedad de productos que incluyen:\n\n- Ropa de gaucho (camisas, pantalones, ponchos)\n- Accesorios (sombreros, cintos, botas)\n- Artículos de decoración (mate, bombillas, artesanías)\n- Productos de cuero (carteras, cinturones)\n\nSi buscas algo específico o necesitas recomendaciones, ¡no dudes en decírmelo! \n\nFuentes (fragmentos usados): Información general sobre productos de Cibergaucho.",
+        "ts": 1758418997989,
+        "meta": {
+          "source": "rag+llm"
+        }
+      }
+    ],
+    "Vg69QMm_7PuOEE5HsLTws": [
+      {
+        "role": "user",
+        "content": "Hola! cuanto sale el producto a",
+        "ts": 1758421178506
+      },
+      {
+        "role": "assistant",
+        "content": "¡Hola! Para poder ayudarte mejor, ¿podrías especificar a qué producto te refieres? Así te doy la información exacta sobre el precio. ¡Gracias! \n\nFuentes (fragmentos usados): Ninguno.",
+        "ts": 1758421181614,
+        "meta": {
+          "source": "rag+llm"
+        }
+      }
+    ]
+  }
+}

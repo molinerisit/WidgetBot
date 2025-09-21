@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RAG Bot — Admin v0.4.1 (UI mejorada)</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --muted: #94a3b8;
+      --line: #1f2937;
+      --input: #0b1220;
+      --primary: #2563eb;
+      --primary-2: #1d4ed8;
+      --ok: #10b981;
+      --warn: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: #e5e7eb
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg, #0f172a, #0f172ad9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 20px;
+      z-index: 10
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+      display: flex;
+      gap: 10px;
+      align-items: center
+    }
+
+    header small {
+      color: var(--muted);
+      font-weight: normal
+    }
+
+    main {
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1fr 1fr
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      font-size: 16px
+    }
+
+    label {
+      font-size: 12px;
+      opacity: .85;
+      display: block;
+      margin-bottom: 6px
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: var(--input);
+      color: #e5e7eb
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .muted {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    .btn {
+      background: var(--primary);
+      border: none;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer
+    }
+
+    .btn:hover {
+      background: var(--primary-2)
+    }
+
+    .btn.secondary {
+      background: #334155
+    }
+
+    .list {
+      display: grid;
+      gap: 8px
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      border: 1px dashed var(--line);
+      border-radius: 12px
+    }
+
+    .switch {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .section-foot {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .help {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .help .icon {
+      width: 18px;
+      height: 18px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 999px;
+      background: #0b1220;
+      border: 1px solid #233045;
+      color: #9fb3d1;
+      font-size: 12px;
+      cursor: help
+    }
+
+    .kv {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px
+    }
+
+    .slider-wrap {
+      padding: 8px 10px;
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      background: #0b1220
+    }
+
+    input[type="range"] {
+      width: 100%
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #0b1220;
+      color: #cbd5e1;
+      font-size: 12px
+    }
+
+    .success {
+      color: #10b981
+    }
+
+    .warn {
+      color: #f59e0b
+    }
+
+    .toolbar {
+      margin-top: 16px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>RAG Bot — Admin <small>v0.4.1</small> <span class="pill">SQLite</span> <span class="pill">RAG</span></h1>
+  </header>
+  <main>
+    <p class="muted">Configurá el bot sin tocar JSON. Guardá cambios y probá en la demo.</p>
+
+    <div class="grid">
+      <!-- Identidad -->
+      <div class="card">
+        <h3>Identidad del Bot</h3>
+        <label>Nombre</label>
+        <input id="botName" placeholder="Cibergaucho Bot">
+
+        <div class="row" style="margin-top:8px">
+          <div>
+            <label class="help">Modo
+              <span class="icon"
+                title="Define el tipo de asistente: Ventas (e-commerce), Reservas (turnos/hotel/mesa), Gestión interna (operaciones/soporte interno).">?</span>
+            </label>
+            <select id="botMode">
+              <option value="ventas">Ventas</option>
+              <option value="reservas">Reservas</option>
+              <option value="gestion">Gestión interna</option>
+            </select>
+          </div>
+          <div>
+            <label class="help">Enfoque
+              <span class="icon"
+                title="Describe en una frase el objetivo del bot (p.ej., 'Guía de ventas y atención al cliente').">?</span>
+            </label>
+            <input id="botFocus" placeholder="Guía de ventas y atención al cliente">
+          </div>
+        </div>
+
+        <div class="switch" style="margin-top:12px">
+          <input type="checkbox" id="showSources" checked>
+          <label for="showSources" style="margin:0">Mostrar “Fuentes (fragmentos usados)” en la respuesta</label>
+        </div>
+      </div>
+
+      <!-- Handoff -->
+      <div class="card">
+        <h3>Handoff a humano</h3>
+        <div class="switch">
+          <input type="checkbox" id="handoffEnabled">
+          <label for="handoffEnabled" style="margin:0">Habilitar derivación a agente humano</label>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <div>
+            <label class="help">Método
+              <span class="icon"
+                title="Elegí cómo derivar: WhatsApp abre un chat directo; Email sugiere la casilla de contacto.">?</span>
+            </label>
+            <select id="handoffMethod">
+              <option value="whatsapp">WhatsApp</option>
+              <option value="email">Email</option>
+            </select>
+          </div>
+          <div>
+            <label>Número WhatsApp</label>
+            <input id="whatsappNumber" placeholder="+5493410000000">
+          </div>
+        </div>
+        <div style="margin-top:8px">
+          <label>Email</label>
+          <input id="emailAddress" placeholder="ventas@tutienda.com">
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div class="card">
+        <h3>FAQ</h3>
+        <div id="faqList" class="list"></div>
+        <div class="row" style="margin-top:8px">
+          <input id="fq" placeholder="Pregunta">
+          <input id="fa" placeholder="Respuesta">
+        </div>
+        <div class="section-foot">
+          <button id="addFaq" class="btn">Agregar</button>
+          <button id="exportFaq" class="btn secondary">Exportar JSON</button>
+        </div>
+        <p class="muted" style="margin-top:8px">Las FAQ se responden sin usar tokens.</p>
+      </div>
+
+      <!-- Reglas -->
+      <div class="card">
+        <h3>Reglas de negocio</h3>
+        <label class="help">Preset
+          <span class="icon"
+            title="Carga un set base de reglas según el tipo de bot. Luego podés sumar tus reglas propias abajo.">?</span>
+        </label>
+        <select id="rulesPreset">
+          <option value="ventas">Ventas (default)</option>
+          <option value="reservas">Reservas</option>
+          <option value="gestion">Gestión interna</option>
+        </select>
+
+        <label style="margin-top:8px" class="help">Reglas personalizadas (una por línea)
+          <span class="icon"
+            title="Escribí cada regla en una línea. Ej.: 'Ofrecer alternativas si no hay stock'.">?</span>
+        </label>
+        <textarea id="rulesCustom" rows="6" placeholder="Ej.: Ofrecer alternativas si no hay stock..."></textarea>
+
+        <div style="margin-top:12px">
+          <label class="help">Subir archivo con reglas
+            <span class="icon"
+              title="Podés subir JSON (['Regla 1','Regla 2']) o CSV/TXT (una regla por línea). Encabezado 'rule' es opcional.">?</span>
+          </label>
+          <input type="file" id="rulesFile" accept=".json,.csv,.txt" />
+          <div class="muted" style="margin-top:6px">JSON: <code>["Regla 1","Regla 2"]</code> — CSV/TXT: una regla por
+            línea.</div>
+          <div class="section-foot">
+            <button id="importRules" class="btn">Importar</button>
+            <button id="exportRules" class="btn secondary">Exportar JSON</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RAG -->
+      <div class="card">
+        <h3>RAG</h3>
+
+        <!-- Top-K -->
+        <label class="help">Top-K
+          <span class="icon"
+            title="Cuántos fragmentos recupera el buscador antes de responder. Recomendado: 4–8.">?</span>
+        </label>
+        <div class="slider-wrap">
+          <input id="ragTopKSlider" type="range" min="1" max="12" value="6">
+          <div class="kv"><span>Sugerido 4–8</span><b><span id="ragTopKDisplay">6</span></b></div>
+        </div>
+        <!-- Mantener el input original para compatibilidad con el script -->
+        <input id="ragTopK" type="number" min="1" max="12" value="6" style="display:none">
+
+        <!-- Chunk / Overlap -->
+        <div class="row" style="margin-top:12px">
+          <div>
+            <label class="help">Chunk size
+              <span class="icon" title="Tamaño del fragmento (palabras aproximadas). Recomendado: 200–300.">?</span>
+            </label>
+            <div class="slider-wrap">
+              <input id="chunkSizeSlider" type="range" min="80" max="600" step="10" value="200">
+              <div class="kv"><span>Sugerido 200–300</span><b><span id="chunkSizeDisplay">200</span> palabras</b></div>
+            </div>
+          </div>
+          <div>
+            <label class="help">Overlap
+              <span class="icon"
+                title="Solapamiento entre fragmentos para no cortar ideas. Recomendado: 40–50.">?</span>
+            </label>
+            <div class="slider-wrap">
+              <input id="overlapSlider" type="range" min="0" max="200" step="5" value="40">
+              <div class="kv"><span>Recomendado: 40–50</span><b><span id="overlapDisplay">40</span></b></div>
+            </div>
+          </div>
+        </div>
+        <!-- Campo escondido que el backend espera con el formato '200 / 40' -->
+        <input id="ragChunks" placeholder="200 / 40" style="display:none">
+        <p class="muted" style="margin-top:8px">RAG (Retrieval Augmented Generation) busca primero los fragmentos
+          relevantes y luego responde con esa info.</p>
+      </div>
+
+      <!-- EXPLORAR DATOS -->
+      <div class="card">
+        <h3>Explorar datos</h3>
+        <div class="row">
+          <div>
+            <label>SQLite (local)</label>
+            <div class="section-foot" style="margin-top:6px">
+              <button id="btnDbSummary" class="btn secondary">Resumen</button>
+              <button id="btnListBots" class="btn secondary">Bots</button>
+              <button id="btnListDocs" class="btn secondary">Docs</button>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <div>
+                <label>Bot ID</label>
+                <input id="dbBotId" placeholder="cibergaucho-bot">
+              </div>
+              <div>
+                <label>Búsqueda (URI/Título)</label>
+                <input id="dbSearch" placeholder="ej: /politica-devoluciones">
+              </div>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <div>
+                <label>Doc ID (para ver chunks)</label>
+                <input id="docId" placeholder="ej: 1">
+              </div>
+              <div>
+                <label>Límite</label>
+                <input id="dbLimit" type="number" min="1" max="200" value="50">
+              </div>
+            </div>
+            <div class="section-foot" style="margin-top:8px">
+              <button id="btnListChunks" class="btn secondary">Ver chunks del Doc</button>
+              <button id="btnListFAQ" class="btn secondary">Ver FAQ</button>
+              <button id="btnListRules" class="btn secondary">Ver Reglas</button>
+            </div>
+          </div>
+
+          <div>
+            <label>Conector externo (GET)</label>
+            <div class="row">
+              <div>
+                <label>Base (solo lectura)</label>
+                <div class="muted">Tomada de <code>EXTERNAL_API_URL</code></div>
+              </div>
+              <div>
+                <label>Path (whitelist)</label>
+                <input id="extPath" placeholder="/productos">
+              </div>
+            </div>
+            <div class="section-foot" style="margin-top:8px">
+              <button id="btnPingExt" class="btn secondary">Ping</button>
+              <button id="btnGetExt" class="btn">GET Path</button>
+            </div>
+            <p class="muted" style="margin-top:8px">Permitidos: <code>/productos</code>, <code>/stock</code>,
+              <code>/reservas</code>, <code>/health</code>, <code>/status</code> (+ query string).</p>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label>Salida</label>
+          <textarea id="dbOutput" rows="12" placeholder="Resultados (JSON)..." readonly></textarea>
+        </div>
+      </div>
+
+
+
+      <!-- Conectores -->
+      <div class="card">
+        <h3>Conectores</h3>
+        <label class="help">URL API externa (productos/stock/reservas)
+          <span class="icon"
+            title="Pone la URL de tu backend (ej. /productos, /stock, /reservas). Para producción, guardalo como variable de entorno en Railway.">?</span>
+        </label>
+        <input id="externalApiUrl" placeholder="https://api.mi-backend.com">
+        <div class="section-foot">
+          <button id="testApi" class="btn secondary">Probar conexión</button>
+          <button id="saveSecrets" class="btn">Guardar en .env (local)</button>
+        </div>
+        <p class="muted" style="margin-top:8px">
+          Producción (Railway): cargá estas URLs en <b>Variables de Entorno</b>. El guardado en <code>.env</code> es
+          solo para desarrollo local.
+        </p>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <button id="saveAll" class="btn">Guardar configuración</button>
+      <button id="reload" class="btn secondary">Recargar</button>
+    </div>
+  </main>
+
+  <script>
+    let cfg;
+
+    // ===== Helpers UI =====
+    function syncRagHiddenInputs() {
+      const topK = document.getElementById('ragTopKSlider').value;
+      const chunk = document.getElementById('chunkSizeSlider').value;
+      const overlap = document.getElementById('overlapSlider').value;
+      document.getElementById('ragTopKDisplay').innerText = topK;
+      document.getElementById('chunkSizeDisplay').innerText = chunk;
+      document.getElementById('overlapDisplay').innerText = overlap;
+      // Mantener compatibilidad con el script del backend (espera "200 / 40")
+      document.getElementById('ragTopK').value = topK;
+      document.getElementById('ragChunks').value = `${chunk} / ${overlap}`;
+    }
+    ['ragTopKSlider', 'chunkSizeSlider', 'overlapSlider'].forEach(id => {
+      document.addEventListener('input', (e) => {
+        if (e.target && e.target.id === id) { syncRagHiddenInputs(); }
+      }, true);
+    });
+
+    function faqItem(q, a, idx) {
+      const wrap = document.createElement('div');
+      wrap.className = 'item';
+      const left = document.createElement('div');
+      left.innerText = (q || '') + " — " + (a || '');
+      const btn = document.createElement('button');
+      btn.className = 'btn secondary';
+      btn.innerText = 'Eliminar';
+      btn.onclick = () => { cfg.faq.splice(idx, 1); renderFaq(); };
+      wrap.appendChild(left); wrap.appendChild(btn);
+      return wrap;
+    }
+    function renderFaq() {
+      const list = document.getElementById('faqList');
+      list.innerHTML = '';
+      (cfg.faq || []).forEach((f, i) => list.appendChild(faqItem(f.q, f.a, i)));
+    }
+
+    // ===== Load/Save =====
+    async function load() {
+      const res = await fetch('/admin/config');
+      cfg = await res.json();
+      cfg.ui = cfg.ui || { showSources: true };
+
+      document.getElementById('botName').value = cfg.bot?.name || '';
+      document.getElementById('botMode').value = (cfg.bot?.mode || 'ventas');
+      document.getElementById('botFocus').value = cfg.bot?.focus || '';
+      document.getElementById('showSources').checked = cfg.ui.showSources !== false;
+
+      document.getElementById('handoffEnabled').checked = !!cfg.handoff?.enabled;
+      document.getElementById('handoffMethod').value = cfg.handoff?.method || 'whatsapp';
+      document.getElementById('whatsappNumber').value = cfg.handoff?.whatsappNumber || '';
+      document.getElementById('emailAddress').value = cfg.handoff?.emailAddress || '';
+
+      cfg.faq = cfg.faq || [];
+      renderFaq();
+
+      const presetMode = (cfg.bot?.mode || 'ventas');
+      document.getElementById('rulesPreset').value = presetMode;
+      document.getElementById('rulesCustom').value = (cfg.rules || []).join("\n");
+
+      // RAG: set sliders y los inputs ocultos
+      const topK = (cfg.rag?.topK ?? 6);
+      const chunkSize = (cfg.rag?.chunkSize ?? 200);
+      const overlap = (cfg.rag?.chunkOverlap ?? 40);
+      document.getElementById('ragTopKSlider').value = topK;
+      document.getElementById('chunkSizeSlider').value = chunkSize;
+      document.getElementById('overlapSlider').value = overlap;
+      syncRagHiddenInputs();
+    }
+
+    async function saveAll() {
+      cfg.bot = cfg.bot || {};
+      cfg.bot.name = document.getElementById('botName').value.trim();
+      cfg.bot.mode = document.getElementById('botMode').value;
+      cfg.bot.focus = document.getElementById('botFocus').value.trim();
+
+      cfg.ui = cfg.ui || {};
+      cfg.ui.showSources = document.getElementById('showSources').checked;
+
+      cfg.handoff = {
+        enabled: document.getElementById('handoffEnabled').checked,
+        method: document.getElementById('handoffMethod').value,
+        whatsappNumber: document.getElementById('whatsappNumber').value.trim(),
+        emailAddress: document.getElementById('emailAddress').value.trim()
+      };
+
+      const preset = document.getElementById('rulesPreset').value;
+      const customs = document.getElementById('rulesCustom').value
+        .split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+
+      const presets = {
+        ventas: [
+          "Responder en tono cercano y persuasivo, sin presionar.",
+          "Ofrecer alternativas si no hay stock.",
+          "Aplicar cupones activos automáticamente si corresponde.",
+          "Cross-sell y up-sell por similitud."
+        ],
+        reservas: [
+          "Confirmar disponibilidad antes de reservar.",
+          "Solicitar datos mínimos del cliente (nombre, fecha, horario).",
+          "Respetar políticas de cancelación y cambios.",
+          "Enviar confirmación con número de reserva."
+        ],
+        gestion: [
+          "Operar sobre datos internos con cuidado y logs.",
+          "Solicitar confirmación para acciones destructivas.",
+          "Respetar permisos de usuario por rol.",
+          "Registrar difs en cambios de datos."
+        ]
+      };
+      cfg.rules = [...(presets[preset] || []), ...customs];
+
+      // RAG desde inputs ocultos sincronizados
+      const topK = parseInt(document.getElementById('ragTopK').value || "6", 10);
+      const [chunkSize, overlap] = document.getElementById('ragChunks').value.split('/').map(x => parseInt((x || '').trim(), 10));
+      cfg.rag = { ...(cfg.rag || {}), topK: topK || 6, chunkSize: chunkSize || 200, chunkOverlap: overlap || 40 };
+
+      await fetch('/admin/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cfg) });
+      alert('Guardado ✔');
+    }
+
+    // ===== Extras (FAQ / Reglas / Conectores) =====
+    document.getElementById('addFaq').onclick = () => {
+      const q = document.getElementById('fq').value.trim();
+      const a = document.getElementById('fa').value.trim();
+      if (!q || !a) return alert('Completá pregunta y respuesta');
+      cfg.faq.push({ q, a }); renderFaq();
+      document.getElementById('fq').value = ""; document.getElementById('fa').value = "";
+    };
+    document.getElementById('exportFaq').onclick = () => {
+      const blob = new Blob([JSON.stringify(cfg.faq || [], null, 2)], { type: "application/json" });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "faq.json"; a.click();
+    };
+
+    document.getElementById('importRules').onclick = async () => {
+      const f = document.getElementById('rulesFile').files[0];
+      if (!f) return alert("Elegí un archivo .json/.csv/.txt");
+      const text = await f.text();
+      const fmt = f.name.endsWith(".json") ? "json" : "csv";
+      const res = await fetch('/admin/rules/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, format: fmt }) });
+      const data = await res.json();
+      if (!data.ok) return alert("Error: " + (data.error || ""));
+      alert(`Importadas ${data.added}. Total: ${data.total}`);
+      const cfgRes = await fetch('/admin/config'); cfg = await cfgRes.json();
+      document.getElementById('rulesCustom').value = (cfg.rules || []).join("\n");
+    };
+    document.getElementById('exportRules').onclick = async () => {
+      const res = await fetch('/admin/rules/export'); const data = await res.json();
+      const blob = new Blob([JSON.stringify(data.rules || [], null, 2)], { type: "application/json" });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "rules.json"; a.click();
+    };
+
+    document.getElementById('saveAll').onclick = saveAll;
+    document.getElementById('reload').onclick = load;
+
+    document.getElementById('testApi').onclick = async () => {
+      const externalApiUrl = document.getElementById('externalApiUrl').value.trim();
+      if (!externalApiUrl) return alert("Ingresá una URL");
+      const res = await fetch('/admin/test-connector', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: externalApiUrl }) });
+      const data = await res.json();
+      alert(data.ok ? `OK (status ${data.statusCode || 200})` : `Falla: ${data.error || ('status ' + data.statusCode)}`);
+    };
+
+    document.getElementById('saveSecrets').onclick = async () => {
+      const externalApiUrl = document.getElementById('externalApiUrl').value.trim();
+      const res = await fetch('/admin/secrets', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ externalApiUrl }) });
+      const data = await res.json();
+      alert(data.ok ? 'Guardado en .env (local) ✔' : ('Error: ' + (data.error || 'desconocido')));
+    };
+
+    load();
+
+    // ======== EXPLORAR DATOS: helpers ========
+function jdump(obj){ return JSON.stringify(obj, null, 2); }
+async function getJSON(url){
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(r.status+" "+r.statusText);
+  return r.json();
+}
+function out(text){ document.getElementById('dbOutput').value = text; }
+
+// Resumen
+document.getElementById('btnDbSummary').onclick = async ()=>{
+  try { const data = await getJSON('/admin/db/summary'); out(jdump(data)); }
+  catch(e){ out("Error: "+e.message); }
+};
+
+// Bots
+document.getElementById('btnListBots').onclick = async ()=>{
+  try { const data = await getJSON('/admin/db/bots'); out(jdump(data)); }
+  catch(e){ out("Error: "+e.message); }
+};
+
+// Docs (por bot + búsqueda opcional)
+document.getElementById('btnListDocs').onclick = async ()=>{
+  const botId = document.getElementById('dbBotId').value.trim() || (cfg.bot?.id || '');
+  const q = new URLSearchParams({
+    bot_id: botId,
+    search: document.getElementById('dbSearch').value.trim(),
+    limit: document.getElementById('dbLimit').value || 50
+  }).toString();
+  try { const data = await getJSON('/admin/db/documents?'+q); out(jdump(data)); }
+  catch(e){ out("Error: "+e.message); }
+};
+
+// Chunks por Doc
+document.getElementById('btnListChunks').onclick = async ()=>{
+  const docId = document.getElementById('docId').value.trim();
+  if (!docId) return out("Poné un Doc ID primero.");
+  const q = new URLSearchParams({
+    document_id: docId,
+    limit: document.getElementById('dbLimit').value || 50
+  }).toString();
+  try { const data = await getJSON('/admin/db/chunks?'+q); out(jdump(data)); }
+  catch(e){ out("Error: "+e.message); }
+};
+
+// FAQ / Reglas
+document.getElementById('btnListFAQ').onclick = async ()=>{
+  try { const data = await getJSON('/admin/db/faq'); out(jdump(data)); }
+  catch(e){ out("Error: "+e.message); }
+};
+document.getElementById('btnListRules').onclick = async ()=>{
+  try { const data = await getJSON('/admin/db/rules'); out(jdump(data)); }
+  catch(e){ out("Error: "+e.message); }
+};
+
+// Conector externo
+document.getElementById('btnPingExt').onclick = async ()=>{
+  try { const data = await getJSON('/admin/connector/ping'); out(jdump(data)); }
+  catch(e){ out("Error: "+e.message); }
+};
+document.getElementById('btnGetExt').onclick = async ()=>{
+  const path = document.getElementById('extPath').value.trim();
+  if (!path || !path.startsWith("/")) return out("Path inválido (use /recurso).");
+  try { const data = await getJSON('/admin/connector/get?path='+encodeURIComponent(path)); out(jdump(data)); }
+  catch(e){ out("Error: "+e.message); }
+};
+  </script>
+</body>
+
+</html>
